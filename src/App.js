@@ -1,6 +1,7 @@
 import logo from "./logo.svg";
 import "./App.css";
 import { useState } from "react";
+import Form from "react-bootstrap/Form";
 import { Button, Toast } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { fetchToken, onMessageListener } from "./firebase";
@@ -9,19 +10,31 @@ function App() {
   const [show, setShow] = useState(false);
   const [notification, setNotification] = useState({ title: "", body: "" });
   const [isTokenFound, setTokenFound] = useState(false);
-  fetchToken(setTokenFound);
+
+  const [token, setToken] = useState("");
+  const [isCbChecked, setIsCbChecked] = useState(false);
+
+  fetchToken(setTokenFound, setToken);
 
   onMessageListener()
     .then((payload) => {
-      setShow(true);
-      setNotification({ title: payload.notification.title, body: payload.notification.body });
+      if (isCbChecked) {
+        setNotification({ title: payload.notification.title, body: payload.notification.body });
+        setShow(true);
+      } else {
+        new Notification(payload.notification.title, { body: payload.notification.body });
+      }
       console.log(payload);
     })
     .catch((err) => console.log("failed: ", err));
 
   const onShowNotificationClicked = () => {
-    setNotification({ title: "Notification", body: "This is a test notification... " });
-    setShow(true);
+    if (isCbChecked) {
+      setNotification({ title: "Notification", body: "This is a test notification... " });
+      setShow(true);
+    } else {
+      new Notification("Notification", { body: "This is a test notification... " });
+    }
   };
 
   return (
@@ -46,10 +59,21 @@ function App() {
         <Toast.Body>{notification.body}</Toast.Body>
       </Toast>
       <header className="App-header">
-        {isTokenFound && <h1> Notification permission enabled 👍🏻 </h1>}
+        {isTokenFound && (
+          <div>
+            <h1> Notification permission enabled 👍🏻 </h1>
+            <h2> Token:</h2>
+            <h6>{token}</h6>
+          </div>
+        )}
         {!isTokenFound && <h1> Need notification permission ❗️ </h1>}
         <img src={logo} className="App-logo" alt="logo" />
         <Button onClick={() => onShowNotificationClicked()}>Show Toast</Button>
+        <Form.Check
+          type={"checkbox"}
+          label={`Enable React-Bootstrap Notification UI`}
+          onClick={() => setIsCbChecked(!isCbChecked)}
+        />
       </header>
     </div>
   );

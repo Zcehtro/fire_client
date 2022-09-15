@@ -5,7 +5,7 @@ import { firebaseConfig } from "./firebaseconfig";
 const firebaseApp = initializeApp(firebaseConfig);
 const messaging = getMessaging(firebaseApp);
 
-export const fetchToken = (setTokenFound) => {
+export const fetchToken = (setTokenFound, setToken) => {
   getToken(messaging, {
     vapidKey:
       "BMVp5v-J11aQURqPK1blgEQNi6rcuqPA-TpMWWkxkdWa2PC2aPj4FN8afeZUcgMdnVH1LClFFaYCs3NtWFASJu0",
@@ -14,6 +14,7 @@ export const fetchToken = (setTokenFound) => {
       if (currentToken) {
         console.log("current token for client: ", currentToken);
         setTokenFound(true);
+        setToken(currentToken);
         // Track the token -> client mapping, by sending to backend server
         // show on the UI that permission is secured
       } else {
