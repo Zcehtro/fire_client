@@ -1,23 +1,54 @@
-import logo from "./logo.svg";
-import "./App.css";
-import { useState } from "react";
-import { fetchToken, onMessageListener } from "./firebase";
+import logo from './logo.svg';
+import './App.css';
+import { useState } from 'react';
+import { fetchToken, onMessageListener, registerServiceWorker } from './firebase';
 
 function App() {
   const [isTokenFound, setTokenFound] = useState(false);
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState('');
+  registerServiceWorker();
 
   fetchToken(setTokenFound, setToken);
 
-  onMessageListener()
-    .then((payload) => {
-      new Notification(payload.notification.title, { body: payload.notification.body });
-      console.log(payload);
-    })
-    .catch((err) => console.log("failed: ", err));
+  const messagePayload = async () => {
+    try {
+      const payload = await onMessageListener();
+      console.log('Message received. ', payload);
+      return payload;
+      // Update a notification state with the new notification
+    } catch (err) {
+      console.log('Failed to receive payload: ', err);
+    }
+  };
+
+  const messageShowNotification = async (payload) => {
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      registration.showNotification(payload.notification.title, {
+        body: payload.notification.body,
+      });
+      console.log('Notification shown.');
+    } catch (err) {
+      console.log('Failed to show notification after payload received: ', err);
+    }
+  };
+
+  // onMessageListener()
+  //   .then((payload) => {
+  //     // new Notification(payload.notification.title, { body: payload.notification.body });
+  //     ServiceWorkerRegistration.showNotification(payload.notification.title, {
+  //       body: payload.notification.body,
+  //     });
+  //     console.log(payload);
+  //   })
+  //   .catch((err) => console.log('failed: ', err));
 
   const onShowNotificationClicked = () => {
-    new Notification("Notification", { body: "This is a test notification... " });
+    const payload = {
+      notification: { title: 'Notification', body: 'This is a test notification... ' },
+    };
+    // new Notification("Notification", { body: "This is a test notification... " });
+    messageShowNotification(payload);
   };
 
   return (
