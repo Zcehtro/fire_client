@@ -32,6 +32,7 @@ function App() {
       console.log('Failed to show notification after payload received: ', err);
     }
   };
+  messageShowNotification(messagePayload());
 
   // onMessageListener()
   //   .then((payload) => {
