@@ -33,3 +33,4 @@ yarn-error.log*
 
 # custom
 /reactcert/
+fire-client-bdeb3-firebase-adminsdk*.json
