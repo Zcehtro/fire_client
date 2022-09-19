@@ -1,55 +1,45 @@
 import logo from './logo.svg';
 import './App.css';
-import { useState } from 'react';
-import { fetchToken, onMessageListener, registerServiceWorker } from './firebase';
+import { useEffect, useState } from 'react';
+import { fetchToken, registerServiceWorker } from './firebase';
 
 function App() {
   const [isTokenFound, setTokenFound] = useState(false);
   const [token, setToken] = useState('');
-  registerServiceWorker();
 
-  fetchToken(setTokenFound, setToken);
+  useEffect(() => {
+    registerServiceWorker();
+  }, [token]);
 
-  const messagePayload = async () => {
-    try {
-      const payload = await onMessageListener();
-      console.log('Message received. ', payload);
-      return payload;
-      // Update a notification state with the new notification
-    } catch (err) {
-      console.log('Failed to receive payload: ', err);
-    }
-  };
+  useEffect(() => {
+    const tokenFunc = async () => {
+      const data = await fetchToken(setTokenFound, setToken);
+      return data;
+    };
+
+    tokenFunc();
+  }, [setTokenFound]);
+
+
+
 
   const messageShowNotification = async (payload) => {
+    const { title, body } = payload.notification;
+
     try {
       const registration = await navigator.serviceWorker.ready;
-      registration.showNotification(payload.notification.title, {
-        body: payload.notification.body,
-      });
-      console.log('Notification shown.');
+      await registration.showNotification(title, { body });
+
+      console.log('[DEBUG] messageShowNotification() Notification send', payload.notification);
     } catch (err) {
-      console.log('Failed to show notification after payload received: ', err);
+      console.log('[DEBUG] catch block:50 ', err.message);
     }
   };
-  messageShowNotification(messagePayload());
 
-  // onMessageListener()
-  //   .then((payload) => {
-  //     // new Notification(payload.notification.title, { body: payload.notification.body });
-  //     ServiceWorkerRegistration.showNotification(payload.notification.title, {
-  //       body: payload.notification.body,
-  //     });
-  //     console.log(payload);
-  //   })
-  //   .catch((err) => console.log('failed: ', err));
-
-  const onShowNotificationClicked = () => {
-    const payload = {
-      notification: { title: 'Notification', body: 'This is a test notification... ' },
-    };
-    // new Notification("Notification", { body: "This is a test notification... " });
-    messageShowNotification(payload);
+  //? Handlers Calls Begin
+  const handleShowNotification = () => {
+    const notification = { title: 'Notification', body: 'This is a test notification... ' };
+    messageShowNotification({ notification });
   };
 
   return (
@@ -64,7 +54,7 @@ function App() {
         )}
         {!isTokenFound && <h1> Need notification permission ❗️ </h1>}
         <img src={logo} className="App-logo" alt="logo" />
-        <button onClick={() => onShowNotificationClicked()}>Show Toast</button>
+        <button onClick={() => handleShowNotification()}>Show Toast</button>
       </header>
     </div>
   );
