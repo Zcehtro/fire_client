@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Push notification demo",
+  "name": "Push notification demo for desktop web browser, Android and iOS",
   "icons": [
     {
       "src": "favicon.ico",
