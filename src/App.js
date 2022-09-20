@@ -23,6 +23,18 @@ const buttonStyle = {
   fontSize: '1.5rem',
 };
 
+const buttonSmallStyle = {
+  padding: '10px',
+  backgroundColor: '#fff',
+  borderRadius: '5px',
+  color: '#555',
+  display: 'block',
+  width: '30vw',
+  maxWidth: '500px',
+  margin: '10px 0',
+  fontSize: '0.8rem',
+};
+
 const buttonSideLabel = {
   padding: '0 0 0 10px',
   fontSize: '1.5rem',
@@ -58,6 +70,18 @@ function App() {
     fetchToken(setUpdated);
   };
 
+  const handleShowNotification = () => {
+    const notification = {
+      title: 'Toast',
+      body: 'This is a test notification. Triggered by your browser, no data from server was received... ',
+    };
+    messageShowNotification({ notification });
+  };
+
+  const handlePrintTokenToConsole = () => {
+    console.log('[DEBUG] token: ', token);
+  };
+
   const messageShowNotification = async (payload) => {
     const { title, body } = payload.notification;
 
@@ -69,14 +93,6 @@ function App() {
     } catch (err) {
       console.log('[DEBUG] catch block:50 ', err.message);
     }
-  };
-
-  const handleShowNotification = () => {
-    const notification = {
-      title: 'Toast',
-      body: 'This is a test notification. Triggered by your browser, no data from server was received... ',
-    };
-    messageShowNotification({ notification });
   };
 
   onMessageListener()
@@ -158,6 +174,9 @@ function App() {
               >
                 {token}
               </code>
+              <button style={buttonSmallStyle} onClick={() => handlePrintTokenToConsole()}>
+                Print token to console
+              </button>
               {!isRegisteredSW && (
                 <p style={{ fontSize: '1.5rem' }}>
                   Register service worker in order to use notifications.
