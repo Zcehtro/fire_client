@@ -36,3 +36,62 @@
     transform: rotate(360deg);
   }
 }
+
+.button-main {
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  color: #555;
+  display: block;
+  width: 50vw;
+  max-width: 500px;
+  margin: 10px 0;
+  font-size: 1.2rem;
+}
+
+.buttonSmallStyle {
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  color: #555;
+  display: block;
+  width: 30vw;
+  max-width: 500px;
+  margin: 10px 0;
+  font-size: 0.8rem;
+}
+
+.buttonSideLabel {
+  padding: 0 0 0 10px;
+  font-size: 1.2rem;
+  text-align: left;
+  margin: 10px 0;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-vertical {
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.div-main-buttons {
+  margin: 20px;
+}
+
+.token-message {
+  font-size: 1.1rem;
+  margin: 10px;
+}
+
+.code-box {
+  font-size: 12px;
+  padding: 10px;
+  background-color: #888;
+  border-radius: 5px;
+  color: #eee;
+  max-width: 90vw;
+  word-wrap: break-word;
+}

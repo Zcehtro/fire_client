@@ -11,37 +11,6 @@ import {
   registerServiceWorker,
 } from './firebase';
 
-const buttonStyle = {
-  padding: '10px',
-  backgroundColor: '#fff',
-  borderRadius: '5px',
-  color: '#555',
-  display: 'block',
-  width: '50vw',
-  maxWidth: '500px',
-  margin: '10px 0',
-  fontSize: '1.5rem',
-};
-
-const buttonSmallStyle = {
-  padding: '10px',
-  backgroundColor: '#fff',
-  borderRadius: '5px',
-  color: '#555',
-  display: 'block',
-  width: '30vw',
-  maxWidth: '500px',
-  margin: '10px 0',
-  fontSize: '0.8rem',
-};
-
-const buttonSideLabel = {
-  padding: '0 0 0 10px',
-  fontSize: '1.5rem',
-  textAlign: 'left',
-  verticalAlign: 'middle',
-};
-
 function App() {
   const [tokenFound, setTokenFound] = useState(false);
   const [token, setToken] = useState('');
@@ -109,87 +78,90 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
 
         <div>
-          <div style={{ margin: '20px' }}>
-            <div style={{ display: 'flex' }}>
-              <button style={buttonStyle} onClick={() => handleRegisterServiceWorker()}>
+          <div className="div-main-buttons">
+            <div className="flex">
+              <button className="button-main" onClick={() => handleRegisterServiceWorker()}>
                 Register Service Worker
               </button>
-              {isRegisteredSW && <p style={buttonSideLabel}> ✅ Service worker registered</p>}
-              {!isRegisteredSW && (
-                <p style={buttonSideLabel}> ❌ Service worker is not registered</p>
-              )}
+              <div className="flex flex-vertical">
+                {isRegisteredSW && <p className="buttonSideLabel"> ✅ Service worker registered</p>}
+                {!isRegisteredSW && (
+                  <p className="buttonSideLabel"> ❌ Service worker is not registered</p>
+                )}
+              </div>
             </div>
-            <div style={{ display: 'flex' }}>
-              <button style={buttonStyle} onClick={() => handleRequestNotificationPermission()}>
+            <div className="flex">
+              <button className="button-main" onClick={() => handleRequestNotificationPermission()}>
                 Request Permission for Notifications
               </button>
-              {isNotificationsEnabled && (
-                <p style={buttonSideLabel}> ✅ Notification permission enabled </p>
-              )}
-              {!isNotificationsEnabled && (
-                <p style={buttonSideLabel}> ❌ Need notification permission </p>
-              )}
+              <div className="flex flex-vertical">
+                {isNotificationsEnabled && (
+                  <p className="buttonSideLabel"> ✅ Notification permission enabled </p>
+                )}
+                {!isNotificationsEnabled && (
+                  <p className="buttonSideLabel"> ❌ Need notification permission </p>
+                )}
+                {tokenFound && <p className="buttonSideLabel"> ✅ Token found </p>}
+                {!tokenFound && <p className="buttonSideLabel"> ❌ Token not found </p>}
+              </div>
             </div>
           </div>
-          {!tokenFound && !isNotificationsEnabled && (
-            <div>
-              <h2 style={{ fontSize: '18px' }}> Firebase Token</h2>
-              <p style={{ fontSize: '1.5rem' }}>
-                Register service worker and enable notifications in order to get Firebase Cloud
-                Messaging token.
-              </p>
-            </div>
-          )}
-          {tokenFound && !isNotificationsEnabled && (
-            <div>
-              <h2 style={{ fontSize: '18px' }}> Firebase Token</h2>
-              <p style={{ fontSize: '1.5rem' }}>
-                Firebase Token found, however notifications are not granted. It is likely that this
-                token is outdated and/or expired.
-              </p>
-              <p style={{ fontSize: '1.5rem' }}>Press button to grant notifications again.</p>
-            </div>
-          )}
-          {tokenFound && isNotificationsEnabled && (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                margin: '0, 10px',
-              }}
-            >
-              <h2 style={{ fontSize: '18px' }}> Firebase Token</h2>
-              <code
-                style={{
-                  fontSize: '12px',
-                  padding: '10px',
-                  backgroundColor: '#888',
-                  borderRadius: '5px',
-                  color: '#eee',
-                  maxWidth: '90vw',
-                  wordWrap: 'break-word',
-                }}
-              >
-                {token}
-              </code>
-              <button style={buttonSmallStyle} onClick={() => handlePrintTokenToConsole()}>
-                Print token to console
-              </button>
-              {!isRegisteredSW && (
-                <p style={{ fontSize: '1.5rem' }}>
-                  Register service worker in order to use notifications.
-                </p>
-              )}
-              {isRegisteredSW && (
-                <button style={buttonStyle} onClick={() => handleShowNotification()}>
-                  Show Toast
-                </button>
-              )}
-            </div>
-          )}
         </div>
+        {!tokenFound && isNotificationsEnabled && (
+          <div>
+            <h5> Firebase Token</h5>
+            <p className="token-message">
+              Token not found in Local Storage. Click the button above to fetch the token from
+              Firebase.
+            </p>
+          </div>
+        )}
+        {!tokenFound && !isNotificationsEnabled && (
+          <div>
+            <h5> Firebase Token</h5>
+            <p className="token-message">
+              Register service worker and enable notifications in order to get Firebase Cloud
+              Messaging token.
+            </p>
+          </div>
+        )}
+        {tokenFound && !isNotificationsEnabled && (
+          <div>
+            <h5> Firebase Token</h5>
+            <p className="token-message">
+              Firebase Token found, however notifications are not granted. It is likely that this
+              token is outdated and/or expired.
+            </p>
+            <p className="token-message">Press button to grant notifications again.</p>
+          </div>
+        )}
+        {tokenFound && isNotificationsEnabled && (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              margin: '0, 10px',
+            }}
+          >
+            <h5> Firebase Token</h5>
+            <code className="code-box">{token}</code>
+            <button className="buttonSmallStyle" onClick={() => handlePrintTokenToConsole()}>
+              Print token to console
+            </button>
+            {!isRegisteredSW && (
+              <p className="token-message">
+                Register service worker in order to use notifications.
+              </p>
+            )}
+            {isRegisteredSW && (
+              <button className="button-main" onClick={() => handleShowNotification()}>
+                Show Toast
+              </button>
+            )}
+          </div>
+        )}
       </header>
     </div>
   );
