@@ -152,7 +152,8 @@ function App() {
                   backgroundColor: '#888',
                   borderRadius: '5px',
                   color: '#eee',
-                  width: '100%',
+                  maxWidth: '90vw',
+                  wordWrap: 'break-word',
                 }}
               >
                 {token}
