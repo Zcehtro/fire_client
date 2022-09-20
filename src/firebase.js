@@ -5,12 +5,47 @@ import { firebaseConfig } from './firebaseconfig';
 const firebaseApp = initializeApp(firebaseConfig);
 const messaging = getMessaging(firebaseApp);
 
-export const registerServiceWorker = async () => {
+const vapidKey =
+  'BMVp5v-J11aQURqPK1blgEQNi6rcuqPA-TpMWWkxkdWa2PC2aPj4FN8afeZUcgMdnVH1LClFFaYCs3NtWFASJu0';
+
+export const checkRegistrationSW = async (setIsRegisteredSW) => {
+  try {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    if (registrations.filter((worker) => worker.scope === 'http://localhost:3000/').length > 0) {
+      setIsRegisteredSW(true);
+    } else {
+      setIsRegisteredSW(false);
+    }
+  } catch (error) {
+    console.log('Error getting registrations: ', error);
+  }
+};
+
+export const checkNotificationsEnabled = async (setIsNotificationsEnabled) => {
+  if (Notification.permission === 'granted') {
+    setIsNotificationsEnabled(true);
+  } else {
+    setIsNotificationsEnabled(false);
+  }
+};
+
+export const checkTokenFound = (setTokenFound, setToken) => {
+  if (localStorage.getItem('fcm_token')) {
+    setTokenFound(true);
+    setToken(localStorage.getItem('fcm_token'));
+  } else {
+    setTokenFound(false);
+  }
+};
+
+export const registerServiceWorker = async (setUpdated) => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker
-      .register('./firebase-messaging-sw.js')
+      .register('./firebase-messaging-sw.js', { scope: '/' })
       .then((registration) => {
-        console.log('Regsitration successful, scope is: ', registration.scope);
+        setUpdated(true);
+        console.log('Registration successful, scope is: ', registration.scope);
+
       })
       .catch((err) => {
         console.log('Service worker registration failed, error: ', err);
@@ -18,23 +53,20 @@ export const registerServiceWorker = async () => {
   }
 };
 
-export const fetchToken = async (setTokenFound, setToken) => {
-  let currentToken = '';
-
+export const fetchToken = async (setUpdated) => {
   try {
-    currentToken = await getToken(messaging, {
-      vapidKey:
-        'BMVp5v-J11aQURqPK1blgEQNi6rcuqPA-TpMWWkxkdWa2PC2aPj4FN8afeZUcgMdnVH1LClFFaYCs3NtWFASJu0',
-    });
+    const currentToken = await getToken(messaging, { vapidKey: vapidKey });
     if (currentToken) {
       console.log('current token for client: ', currentToken);
-      setTokenFound(true);
-      setToken(currentToken);
+      localStorage.setItem('fcm_token', currentToken);
+      // setTokenFound(true);
+      // setToken(currentToken);
+      setUpdated(true);
       // Track the token -> client mapping, by sending to backend server
       // show on the UI that permission is secured
     } else {
       console.log('No registration token available. Request permission to generate one.');
-      setTokenFound(false);
+      // setTokenFound(false);
       // shows on the UI that permission is required
     }
   } catch (err) {
