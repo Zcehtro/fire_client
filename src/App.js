@@ -82,7 +82,7 @@ function App() {
   onMessageListener()
     .then((payload) => {
       messageShowNotification(payload);
-      console.log(payload);
+      console.log(`[DEBUG] Message from Firebase: ${payload}`);
     })
     .catch((err) => console.log('failed: ', err));
 

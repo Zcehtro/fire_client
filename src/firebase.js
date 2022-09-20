@@ -11,8 +11,12 @@ const vapidKey =
 export const checkRegistrationSW = async (setIsRegisteredSW) => {
   try {
     const registrations = await navigator.serviceWorker.getRegistrations();
-    if (registrations.filter((worker) => worker.scope === 'http://localhost:3000/').length > 0) {
+    const correctSW = registrations.filter(
+      (obj) => obj.active.scriptURL === obj.scope + 'firebase-messaging-sw.js',
+    );
+    if (correctSW.length > 0) {
       setIsRegisteredSW(true);
+      console.log(`[DEBUG] Found correct ServiceWorker: ${correctSW}`);
     } else {
       setIsRegisteredSW(false);
     }
@@ -45,7 +49,6 @@ export const registerServiceWorker = async (setUpdated) => {
       .then((registration) => {
         setUpdated(true);
         console.log('Registration successful, scope is: ', registration.scope);
-
       })
       .catch((err) => {
         console.log('Service worker registration failed, error: ', err);
